@@ -1061,6 +1061,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ball: {fileID: 2020927664}
   moveSpeed: 500
+  hitForce: 2
 --- !u!1 &2144605017
 GameObject:
   m_ObjectHideFlags: 0
