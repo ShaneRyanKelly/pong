@@ -21,11 +21,11 @@ public class Ball : MonoBehaviour
     void FixedUpdate()
     {
         rB.velocity = direction * Time.deltaTime * moveSpeed;
-        rB.AddForceAtPosition(direction.normalized, transform.position);
+        //rB.AddForceAtPosition(direction.normalized, transform.position);
     }
 
     private void GetDirection(){
-        int coinToss = Random.Range(0, 1);
+        int coinToss = Random.Range(0, 2);
         if (coinToss == 0){
             direction = Vector2.left;
         }
@@ -34,19 +34,21 @@ public class Ball : MonoBehaviour
         }
     }
 
-    //private void /// <summary>
+    private void /// <summary>
     /// Sent when an incoming collider makes contact with this object's
     /// collider (2D physics only).
     /// </summary>
     /// <param name="other">The Collision2D data associated with this collision.</param>
-    /*OnCollisionEnter2D(Collision2D other)
+    OnCollisionEnter2D(Collision2D other)
     {
         if (other.gameObject.tag == "Walls"){
             direction = new Vector2(direction.x, -direction.normalized.y);
         }
         else {
-            direction = new Vector2(-direction.x, (other.gameObject.GetComponent<Rigidbody2D>().velocity.normalized.y * rB.velocity.normalized.y));
+            float newY = (rB.velocity.normalized.y / 2) + (other.collider.attachedRigidbody.velocity.normalized.y / 3);
+            direction = new Vector2(-direction.x, newY);
+            //direction = new Vector2(-direction.x, (other.gameObject.GetComponent<Rigidbody2D>().velocity.normalized.y * rB.velocity.normalized.y));
         }
         //direction = Vector2.Reflect(direction, other.contacts[0].normal);
-    }*/
+    }
 }
