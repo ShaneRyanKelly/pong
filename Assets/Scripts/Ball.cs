@@ -10,12 +10,16 @@ public class Ball : MonoBehaviour
     public float maxSpeed;
 
     public float TimeOfSimulation;
+    public float funFactor;
 
     private Rigidbody2D rB;
     private LineRenderer lR;
     private Vector2 direction;
     private Vector2 hitDirection;
     private Vector2 maxVelocity;
+    private int faultCount = 0;
+    private int previousWalls = 0;
+    private bool gameStart = false;
 
     // Start is called before the first frame update
     void Start()
@@ -37,7 +41,10 @@ public class Ball : MonoBehaviour
         for (int i = 0; i < lR.positionCount; i++){
             lR.SetPosition(i, SimulateTrajectory()[i]);
         }*/
-        
+        //if (gameStart && Mathf.Abs(direction) < 10.0f){
+        //    Debug.Log("FAULT");
+        //    Reset();
+        //}
         rB.AddForceAtPosition((direction*Time.deltaTime*moveSpeed), transform.position);
         rB.velocity = Vector2.ClampMagnitude(rB.velocity, maxSpeed);
         //Debug.Log(rB.velocity);
@@ -72,6 +79,13 @@ public class Ball : MonoBehaviour
     {
         //hitDirection = (rB.velocity.normalized * other.collider.attachedRigidbody.velocity.normalized);
         if (other.gameObject.tag == "Walls"){
+            if (previousWalls == 2){
+                Debug.Log("FAULT");
+               Reset();
+            }
+            direction = new Vector2(direction.x, -direction.y);
+
+            previousWalls++;
             //intereseting
             //float newY = (rB.angularVelocity - other.contacts[0].normal.y);
             //direction = Vector2.ClampMagnitude(new Vector2(direction.x, newY), 0.7f);
@@ -83,7 +97,9 @@ public class Ball : MonoBehaviour
             Reset();
         }
         else {
-            float newY = (rB.velocity.normalized.y - other.collider.attachedRigidbody.velocity.normalized.y);
+            gameStart = true;
+            previousWalls = 0;
+            float newY = funFactor * (rB.velocity.normalized.y - other.collider.attachedRigidbody.velocity.normalized.y);
             //float newY = (rB.velocity.normalized.y / 2) + (other.collider.attachedRigidbody.velocity.normalized.y / 3);
             direction = Vector2.ClampMagnitude(new Vector2(-direction.x, newY), 0.7f);
             //direction = new Vector2(-direction.x, (other.gameObject.GetComponent<Rigidbody2D>().velocity.normalized.y * rB.velocity.normalized.y));
@@ -96,6 +112,9 @@ public class Ball : MonoBehaviour
         transform.position = Vector2.zero;
         direction = Vector2.zero;
         rB.velocity = Vector2.zero;
+        rB.angularVelocity = 0.0f;
+        previousWalls = 0;
+        gameStart = false;
         GetDirection();
     }
 
